@@ -5,6 +5,12 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +41,9 @@ public class TopicosController {
 	TopicoService topicoService;
 
 	@GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
-	public List<TopicoDTO> listTopics() {
-		return topicoService.listTopics();
+	@Cacheable(value = "listTopics")
+	public Page<TopicoDTO> listTopics(@PageableDefault(sort = "id", direction = Direction.DESC) Pageable pageable) {
+		return topicoService.listTopics(pageable);
 	}
 
 	@GetMapping(path = "/{nomeCurso}/nomeCurso", produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -51,6 +58,7 @@ public class TopicosController {
 
 	@ResponseStatus(code = HttpStatus.CREATED)
 	@PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CacheEvict(value = "listTopics", allEntries = true)
 	public ResponseEntity<TopicoDTO> saveTopic(@RequestBody @Valid TopicoFormDTO topicoForm,
 			UriComponentsBuilder uriBuilder) {
 		return topicoService.saveTopic(topicoForm, uriBuilder);
@@ -58,12 +66,14 @@ public class TopicosController {
 	}
 
 	@PutMapping(path = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CacheEvict(value = "listTopics", allEntries = true)
 	public ResponseEntity<TopicoDTO> updateTopic(@PathVariable Long id,
 			@RequestBody @Valid AtualizaTopicoDTO atualizaTopicoDTO) throws GlobalException {
 		return topicoService.updateTopic(id, atualizaTopicoDTO);
 	}
 
 	@DeleteMapping(path = "/{id}", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@CacheEvict(value = "listTopics", allEntries = true)
 	public ResponseEntity<MensagemDTO> updateTopic(@PathVariable Long id) throws GlobalException {
 		return topicoService.deleteTopic(id);
 	}

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -34,10 +36,11 @@ public class TopicoService {
 	@Autowired
 	CursoRepository cursoRepository;
 
-	public List<TopicoDTO> listTopics() {
-		List<Topico> topicos = topicoRepository.findAll();
+	public Page<TopicoDTO> listTopics(Pageable pageable) {
+		
+		Page<Topico> topicos = topicoRepository.findAll(pageable);
 
-		return topicos.stream().map(TopicoDTO::new).collect(Collectors.toList());
+		return topicos.map(TopicoDTO::new);
 	}
 
 	public List<TopicoDTO> findByCourseName(String nomeCurso) {
