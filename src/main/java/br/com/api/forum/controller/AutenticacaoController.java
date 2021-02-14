@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.api.forum.config.security.TokenService;
 import br.com.api.forum.dto.LoginDTO;
 import br.com.api.forum.dto.TokenDTO;
-import br.com.api.forum.service.TokenService;
 
 @RestController
 @RequestMapping("/auth")
@@ -38,7 +38,6 @@ public class AutenticacaoController {
 
 			String token = tokenService.gerarToken(authentication);
 
-			System.out.println(token);
 			return ResponseEntity.ok(new TokenDTO(token, "Bearer"));
 
 		} catch (AuthenticationException e) {

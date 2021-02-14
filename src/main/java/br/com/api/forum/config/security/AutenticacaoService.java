@@ -1,4 +1,4 @@
-package br.com.api.forum.service;
+package br.com.api.forum.config.security;
 
 import java.util.Optional;
 
