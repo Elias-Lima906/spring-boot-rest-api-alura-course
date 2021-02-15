@@ -26,6 +26,7 @@ public class AutenticacaoService implements UserDetailsService{
 		if(user.isEmpty()) {
 			throw new UsernameNotFoundException(USUARIO_INVALIDO);
 		}
+		
 		return user.get();
 	}
 
